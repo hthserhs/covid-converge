@@ -26,45 +26,46 @@ const Patients = () => {
         Patients in your{' '}
         <Link to="/affiliations">affiliated quarantine centers</Link>
       </h2>
-
-      <table className="table is-fullwidth">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Quarantine Center</th>
-            <th>Risk Level</th>
-            <th>COVID-19 status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {patients.map(({ id, name, address, riskScore, positive }) => (
-            <tr key={id}>
-              <td>{id}</td>
-              <td>{name}</td>
-              <td>{address}</td>
-              <td>
-                <span
-                  className={c(
-                    'tag is-light',
-                    `is-${colorCodes[riskScore]}`,
-                    'Patients-risk_level'
-                  )}
-                >
-                  {riskLevels[riskScore]}
-                </span>
-              </td>
-              <td>
-                {positive && (
-                  <span className="icon has-text-danger">
-                    <FontAwesomeIcon icon={faVirus} />
-                  </span>
-                )}
-              </td>
+      <div className="table-container">
+        <table className="table is-fullwidth">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Quarantine Center</th>
+              <th>Risk Level</th>
+              <th>COVID-19 status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {patients.map(({ id, name, address, riskScore, positive }) => (
+              <tr key={id}>
+                <td>{id}</td>
+                <td>{name}</td>
+                <td>{address}</td>
+                <td>
+                  <span
+                    className={c(
+                      'tag',
+                      `is-${colorCodes[riskScore]}`,
+                      'Patients-risk_level'
+                    )}
+                  >
+                    {riskLevels[riskScore]}
+                  </span>
+                </td>
+                <td>
+                  {positive && (
+                    <span className="icon has-text-danger">
+                      <FontAwesomeIcon icon={faVirus} />
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 };
