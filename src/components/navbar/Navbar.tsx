@@ -20,7 +20,10 @@ const Navbar = () => {
       <div className="navbar-brand">
         <Link className="navbar-item" to="/">
           <img src={appLogo} alt="COVID converge" width="32" height="32" />
-          <span className="Navbar-app_name">COVID Converge</span>
+          <span className="Navbar-app_name">
+            COVID
+            <span className="has-text-weight-bold">Converge</span>
+          </span>
         </Link>
         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <a
