@@ -5,3 +5,8 @@ export interface Patient {
   riskScore: number;
   positive: boolean;
 }
+
+export interface QuarantineCenter {
+  id: number;
+  address: string;
+}
