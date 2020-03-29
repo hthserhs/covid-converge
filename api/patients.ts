@@ -18,5 +18,6 @@ function randomPatients() {
 }
 
 export default function(req: NowRequest, res: NowResponse) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.json(randomPatients());
 }
