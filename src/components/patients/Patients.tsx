@@ -1,13 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import c from 'classnames';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getPatients } from '../../api/patients';
 import { Patient } from '../../types/types';
+import Pagination from '../common/Pagination';
 import './Patients.css';
+import SymptomTags from './SymptomTags';
 
-const riskLevels = ['Low', 'Medium', 'High'];
-const colorCodes = ['success', 'warning', 'danger'];
+const NOTABLE_SYMPTOMS = ['fever', 'shortness-of-breath'];
 
 const Patients = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -32,40 +32,60 @@ const Patients = () => {
             <tr>
               <th>ID</th>
               <th>Name</th>
+              <th>Notable Symptoms</th>
               <th>Quarantine Center</th>
-              <th>Risk Level</th>
-              <th>COVID-19 status</th>
+              <th># Days</th>
+              <th>Contact</th>
             </tr>
           </thead>
           <tbody>
-            {patients.map(({ id, name, address, riskScore, positive }) => (
-              <tr key={id}>
-                <td>{id}</td>
-                <td>{name}</td>
-                <td>{address}</td>
-                <td>
-                  <span
-                    className={c(
-                      'tag',
-                      `is-${colorCodes[riskScore]}`,
-                      'Patients-risk_level'
-                    )}
-                  >
-                    {riskLevels[riskScore]}
-                  </span>
-                </td>
-                <td>
-                  {positive && (
-                    <span className="icon has-text-danger">
-                      <FontAwesomeIcon icon="virus" />
+            {patients.map(patient => {
+              const {
+                id,
+                name,
+                address,
+                positive,
+                daysInQuarantine,
+                contact,
+                symptoms
+              } = patient;
+
+              const notableSymptoms = symptoms.filter(
+                s => NOTABLE_SYMPTOMS.includes(s.name) && s.severity > 0
+              );
+
+              return (
+                <tr key={id}>
+                  <td>
+                    <span className="level">
+                      {id}
+                      {positive && (
+                        <span className="icon has-text-danger">
+                          <FontAwesomeIcon icon="virus" />
+                        </span>
+                      )}
                     </span>
-                  )}
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td>{name}</td>
+                  <td>
+                    <SymptomTags symptoms={notableSymptoms} />
+                  </td>
+                  <td>{address}</td>
+                  <td>{daysInQuarantine}</td>
+                  <td>{contact}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
+      <Pagination
+        fromItem={1}
+        toItem={10}
+        total={50}
+        onNextPage={console.log}
+        onPreviousPage={console.log}
+      />
     </>
   );
 };
