@@ -4,13 +4,13 @@ import { getQuarantineCenters } from '../../api/infrastructure';
 import { QuarantineCenter } from '../../types/types';
 import Checkbox from '../common/Checkbox';
 import Pagination from '../common/Pagination';
-import './Affiliations.css';
 
 interface Selection {
   [id: string]: boolean;
 }
 
 const Affiliations = () => {
+  const [originalSelection, setOriginalSelection] = useState<Selection>({});
   const [selection, setSelection] = useState<Selection>({});
   const [query, setQuery] = useState<string>('');
   const [allCenters, setAllCenters] = useState<QuarantineCenter[]>([]);
@@ -28,15 +28,15 @@ const Affiliations = () => {
     getQuarantineCenters().then(resultSet => {
       setAllCenters(resultSet);
       setCurrentCenters(resultSet);
-      setSelection(
-        resultSet.reduce<Selection>(
-          (acc, cur) => ({
-            ...acc,
-            [cur.id]: Math.random() > 0.5
-          }),
-          {}
-        )
+      const sel = resultSet.reduce<Selection>(
+        (acc, cur) => ({
+          ...acc,
+          [cur.id]: Math.random() > 0.5
+        }),
+        {}
       );
+      setOriginalSelection(sel);
+      setSelection(sel);
       setPagination(p => ({
         ...p,
         total: resultSet.length
@@ -79,6 +79,10 @@ const Affiliations = () => {
   const to = Math.min(from + pageSize - 1, total);
   const centers = currentCenters.slice(from - 1, to);
 
+  const isSelectionUpdated = Object.entries(originalSelection).some(
+    ([id, isSelected]) => isSelected !== selection[id]
+  );
+
   return (
     <>
       <h1 className="title">Quarantine Centers</h1>
@@ -101,7 +105,12 @@ const Affiliations = () => {
         </div>
         <div className="level-right">
           <div className="buttons">
-            <button className="button is-primary">Save changes</button>
+            <button
+              className="button is-primary"
+              disabled={!isSelectionUpdated}
+            >
+              Save changes
+            </button>
           </div>
         </div>
       </div>
