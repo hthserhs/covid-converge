@@ -1,4 +1,3 @@
-import { faVirus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import c from 'classnames';
 import React, { useEffect, useState } from 'react';
@@ -22,10 +21,11 @@ const Patients = () => {
   return (
     <>
       <h1 className="title">Patients</h1>
-      <h2 className="subtitle">
-        Patients in your{' '}
-        <Link to="/affiliations">affiliated quarantine centers</Link>
-      </h2>
+      <div className="notification is-info is-light">
+        Listed here are all patients in the quarantine centers you're currently
+        monitoring. Click <Link to="/affiliations">here</Link> to see or update
+        the list.
+      </div>
       <div className="table-container">
         <table className="table is-fullwidth">
           <thead>
@@ -57,7 +57,7 @@ const Patients = () => {
                 <td>
                   {positive && (
                     <span className="icon has-text-danger">
-                      <FontAwesomeIcon icon={faVirus} />
+                      <FontAwesomeIcon icon="virus" />
                     </span>
                   )}
                 </td>

@@ -1,5 +1,3 @@
-.Checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
+.Checkbox-button.button {
+  justify-content: flex-start;
 }

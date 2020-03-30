@@ -13,7 +13,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className="navbar is-light is-fixed-top"
+      className="navbar is-warning is-fixed-top"
       role="navigation"
       aria-label="main navigation"
     >
@@ -45,6 +45,7 @@ const Navbar = () => {
             activeClassName="is-active"
             className="navbar-item"
             to="/patients"
+            onClick={() => setMenu(false)}
           >
             Patients
           </NavLink>
@@ -52,6 +53,7 @@ const Navbar = () => {
             activeClassName="is-active"
             className="navbar-item"
             to="/affiliations"
+            onClick={() => setMenu(false)}
           >
             Affiliations
           </NavLink>
@@ -59,6 +61,7 @@ const Navbar = () => {
             activeClassName="is-active"
             className="navbar-item"
             to="/profile"
+            onClick={() => setMenu(false)}
           >
             Profile
           </NavLink>

@@ -3,7 +3,7 @@ import faker from 'faker/locale/en_IND';
 import { randomIntegerInRange } from './_utils/mock';
 
 function quarantineCenters() {
-  return Array(randomIntegerInRange(10, 10))
+  return Array(randomIntegerInRange(0, 100))
     .fill(null)
     .map(() => {
       return {
