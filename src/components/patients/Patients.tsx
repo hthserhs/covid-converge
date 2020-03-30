@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { getPatients } from '../../api/patients';
 import { Patient } from '../../types/types';
 import Pagination from '../common/Pagination';
@@ -21,10 +20,18 @@ const Patients = () => {
   return (
     <>
       <h1 className="title">Patients</h1>
-      <div className="notification is-info is-light">
-        Listed here are all patients in the quarantine centers you're currently
-        monitoring. Click <Link to="/affiliations">here</Link> to see or update
-        the list.
+      <div className="level">
+        <div className="level-left">
+          <div className="field">
+            <p className="control has-icons-left">
+              <input className="input" type="text" placeholder="Search" />
+              <span className="icon is-small is-left">
+                <FontAwesomeIcon icon="search" />
+              </span>
+            </p>
+          </div>
+        </div>
+        <div className="level-right"></div>
       </div>
       <div className="table-container">
         <table className="table is-fullwidth">
@@ -58,7 +65,7 @@ const Patients = () => {
                 <tr key={id}>
                   <td>
                     <span className="level">
-                      {id}
+                      <span>{id}</span>
                       {positive && (
                         <span className="icon has-text-danger">
                           <FontAwesomeIcon icon="virus" />
@@ -67,7 +74,7 @@ const Patients = () => {
                     </span>
                   </td>
                   <td>{name}</td>
-                  <td>
+                  <td style={{ overflowX: 'auto' }}>
                     <SymptomTags symptoms={notableSymptoms} />
                   </td>
                   <td>{address}</td>

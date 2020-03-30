@@ -17,7 +17,7 @@ export const symptoms: Symptom[] = [
   { name: 'sore-throat', displayName: 'Sore Throat' },
   { name: 'loss-of-taste', displayName: 'Loss of Taste' },
   { name: 'weakness', displayName: 'Weakness' },
-  { name: 'shortness-of-breath', displayName: 'Respiratory Rate' },
+  { name: 'shortness-of-breath', displayName: 'RR' },
   { name: 'sneezing', displayName: 'Sneezing' },
   { name: 'loss-of-smell', displayName: 'Loss of Smell' }
 ];

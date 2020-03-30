@@ -10,7 +10,7 @@ interface Props {
 
 const SymptomTags: FC<Props> = ({ symptoms }) => {
   return (
-    <div className="field is-grouped is-grouped-multiline">
+    <div className="field is-grouped">
       {symptoms.map(symptom => (
         <div key={symptom.name} className="control">
           <div className="tags has-addons">
