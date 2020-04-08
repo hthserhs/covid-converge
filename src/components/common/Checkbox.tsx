@@ -16,7 +16,7 @@ const Checkbox: FC<Props> = ({ label, checked, onToggle }) => {
 
   return (
     <button
-      className={c('button is-light is-fullwidth Checkbox-button')}
+      className={c('button is-white is-fullwidth Checkbox-button')}
       onClick={onToggle}
     >
       <span

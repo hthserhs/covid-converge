@@ -33,7 +33,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "REACT_APP_BASE_URL=api react-scripts build",
+    "build": "REACT_APP_BASE_URL=http://covid19-stage.ap-south-1.elasticbeanstalk.com react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -51,5 +51,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "http://covid19-stage.ap-south-1.elasticbeanstalk.com"
 }

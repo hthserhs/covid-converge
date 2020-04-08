@@ -1,6 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
-import { getQuarantineCenters } from '../../api/infrastructure';
+import {
+  getHealthWorkerQuarantineCenters,
+  getQuarantineCenters,
+  updateHealthWorkerQuarantineCenters
+} from '../../api/infrastructure';
 import { QuarantineCenter } from '../../types/types';
 import Checkbox from '../common/Checkbox';
 import Pagination from '../common/Pagination';
@@ -9,7 +13,9 @@ interface Selection {
   [id: string]: boolean;
 }
 
-const Affiliations = () => {
+const QuarantineCenters = () => {
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [originalSelection, setOriginalSelection] = useState<Selection>({});
   const [selection, setSelection] = useState<Selection>({});
   const [query, setQuery] = useState<string>('');
@@ -25,23 +31,29 @@ const Affiliations = () => {
   const { currentPage, total, pageSize } = pagination;
 
   useEffect(() => {
-    getQuarantineCenters().then(resultSet => {
-      setAllCenters(resultSet);
-      setCurrentCenters(resultSet);
-      const sel = resultSet.reduce<Selection>(
-        (acc, cur) => ({
-          ...acc,
-          [cur.id]: Math.random() > 0.5
-        }),
-        {}
-      );
-      setOriginalSelection(sel);
-      setSelection(sel);
-      setPagination(p => ({
-        ...p,
-        total: resultSet.length
-      }));
-    });
+    Promise.all([getHealthWorkerQuarantineCenters(1), getQuarantineCenters()])
+      .then(([hwQC, allQC]) => {
+        const sel = hwQC.reduce<Selection>(
+          (acc, cur) => ({
+            ...acc,
+            [cur.id]: true
+          }),
+          {}
+        );
+        setOriginalSelection(sel);
+        setSelection(sel);
+        setAllCenters(allQC);
+        setCurrentCenters(allQC);
+        setPagination((p) => ({
+          ...p,
+          total: allQC.length
+        }));
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+        setError('An error occurred. Try again later.');
+      });
   }, []);
 
   const onNextPage = () => {
@@ -75,13 +87,28 @@ const Affiliations = () => {
     });
   };
 
+  const onSave = () => {
+    const centers = Object.entries(selection)
+      .filter(([_, v]) => v)
+      .map(([k]) => +k);
+    updateHealthWorkerQuarantineCenters(1, centers).then(console.log);
+  };
+
   const from = currentPage * pageSize + (total > 0 ? 1 : 0);
   const to = Math.min(from + pageSize - 1, total);
   const centers = currentCenters.slice(from - 1, to);
 
-  const isSelectionUpdated = Object.entries(originalSelection).some(
-    ([id, isSelected]) => isSelected !== selection[id]
+  const isSelectionUpdated = Object.entries(selection).some(
+    ([id, isSelected]) => isSelected !== originalSelection[id]
   );
+
+  if (loading) {
+    return <>Loading...</>;
+  }
+
+  if (error) {
+    return <div className="notification is-danger is-light">{error}</div>;
+  }
 
   return (
     <>
@@ -108,6 +135,7 @@ const Affiliations = () => {
             <button
               className="button is-primary"
               disabled={!isSelectionUpdated}
+              onClick={onSave}
             >
               Save changes
             </button>
@@ -143,4 +171,4 @@ const Affiliations = () => {
   );
 };
 
-export default Affiliations;
+export default QuarantineCenters;
