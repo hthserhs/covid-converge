@@ -13,3 +13,15 @@ export function setToken(token: string) {
 export function deleteToken() {
   localStorage.removeItem('token');
 }
+
+export function getId() {
+  return localStorage.getItem('id');
+}
+
+export function setId(id: string) {
+  localStorage.setItem('id', id);
+}
+
+export function deleteId() {
+  localStorage.removeItem('id');
+}

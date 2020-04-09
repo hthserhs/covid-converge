@@ -1,8 +1,19 @@
-import { Patient } from '../types/types';
+import { PatientHealthRecord } from '../types/types';
 import api from './client';
 
-export async function getPatients(id: number) {
+export async function getPatientHealthRecords(
+  token: string,
+  id: number,
+  healthWorkerId: number
+) {
   return api
-    .get<Patient[]>(`/healthworkers/${id}/patients`)
+    .get<PatientHealthRecord[]>(
+      `/patients/${id}/symptoms?healthWorkerId=${healthWorkerId}`,
+      {
+        headers: {
+          token
+        }
+      }
+    )
     .then((response) => response.data);
 }

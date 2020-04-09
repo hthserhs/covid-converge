@@ -10,16 +10,28 @@ const Login = () => {
   const history = useHistory();
   const location = useLocation();
   const [mobileNumber, setMobileNumber] = useState('');
+  const [error, setError] = useState<JSX.Element | null>(null);
   const [loading, setLoading] = useState(false);
   const valid = /^\d{10}$/.test(mobileNumber);
   const { sendOtp } = useContext(AuthContext);
 
   const onSubmit = () => {
     setLoading(true);
-    sendOtp(mobileNumber).then(() => {
-      setLoading(false);
-      history.push(`/verify?mobileNumber=${mobileNumber}`, location.state);
-    });
+    setError(null);
+    sendOtp(mobileNumber)
+      .then(() => {
+        setLoading(false);
+        history.push(`/verify?mobileNumber=${mobileNumber}`, location.state);
+      })
+      .catch(() => {
+        setLoading(false);
+        setError(
+          <>
+            Not able to verify <strong>{mobileNumber}</strong>. Contact{' '}
+            <code>prateek.jain@embryyo.com</code> for any queries.
+          </>
+        );
+      });
   };
 
   const onChangeMobileNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +40,7 @@ const Login = () => {
 
   return (
     <div className="Login">
+      {error && <div className="notification is-danger is-light">{error}</div>}
       <div className="notification is-info is-light">
         As a healthcare professional you can login using your 10 digit mobile
         number. Note that you can <strong>not</strong> register for an account

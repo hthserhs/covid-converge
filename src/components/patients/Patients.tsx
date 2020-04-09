@@ -1,13 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react';
-import { getPatients } from '../../api/patients';
-import { Patient, Symptom } from '../../types/types';
+import React, { useContext, useEffect, useState } from 'react';
+import { getPatients } from '../../api/health-workers';
+import { AuthContext } from '../../auth-state';
+import { Patient } from '../../types/types';
 import Pagination from '../common/Pagination';
+import PatientRow from './PatientRow';
 import './Patients.css';
-import SymptomTags from './SymptomTags';
 
 // const NOTABLE_SYMPTOMS = ['fever', 'shortness-of-breath'];
-const MILLIS_DAY = 24 * 60 * 60 * 1000;
 
 const Patients = () => {
   const [error, setError] = useState<string | null>(null);
@@ -22,25 +22,29 @@ const Patients = () => {
     pageSize: 10
   });
 
+  const { user } = useContext(AuthContext);
+
   const { currentPage, total, pageSize } = pagination;
 
   useEffect(() => {
-    getPatients(1)
-      // .then((resultSet) => resultSet.sort((a, b) => b.riskScore - a.riskScore))
-      .then((resultSet) => {
-        setLoading(false);
-        setAllPatients(resultSet);
-        setCurrentPatients(resultSet);
-        setPagination((p) => ({
-          ...p,
-          total: resultSet.length
-        }));
-      })
-      .catch(() => {
-        setLoading(false);
-        setError('An error occurred. Try again later.');
-      });
-  }, []);
+    if (user?.id) {
+      getPatients(user.id)
+        // .then((resultSet) => resultSet.sort((a, b) => b.riskScore - a.riskScore))
+        .then((resultSet) => {
+          setLoading(false);
+          setAllPatients(resultSet);
+          setCurrentPatients(resultSet);
+          setPagination((p) => ({
+            ...p,
+            total: resultSet.length
+          }));
+        })
+        .catch(() => {
+          setLoading(false);
+          setError('An error occurred. Try again later.');
+        });
+    }
+  }, [user]);
 
   const onChangeQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
     const q = e.target.value;
@@ -87,7 +91,9 @@ const Patients = () => {
 
   return (
     <>
-      <h1 className="title">Patients</h1>
+      <h1 className="title">
+        <FontAwesomeIcon icon="procedures" /> Patients
+      </h1>
       <div className="level">
         <div className="level-left">
           <div className="field">
@@ -113,7 +119,7 @@ const Patients = () => {
             <tr>
               <th>ID</th>
               <th>Name</th>
-              <th>Notable Symptoms</th>
+              <th>Recent Symptoms</th>
               <th>Quarantine Center</th>
               <th># Days</th>
               <th>Contact</th>
@@ -121,48 +127,7 @@ const Patients = () => {
           </thead>
           <tbody>
             {patients.map((patient) => {
-              const {
-                id,
-                address,
-                firstName,
-                lastName,
-                isHighRisk,
-                mobileNumber,
-                quarantineStartDate
-              } = patient;
-
-              const notableSymptoms: Symptom[] = [];
-              const daysInQuarantine = Math.floor(
-                (Date.now() - quarantineStartDate) / MILLIS_DAY
-              );
-
-              // symptoms.filter(
-              //   (s) => NOTABLE_SYMPTOMS.includes(s.name) && s.severity > 0
-              // );
-
-              return (
-                <tr key={id}>
-                  <td>
-                    <span className="level">
-                      <span>{id}</span>
-                      {isHighRisk && (
-                        <span className="icon has-text-danger">
-                          <FontAwesomeIcon icon="virus" />
-                        </span>
-                      )}
-                    </span>
-                  </td>
-                  <td>
-                    {firstName} {lastName}
-                  </td>
-                  <td style={{ overflowX: 'auto' }}>
-                    <SymptomTags symptoms={notableSymptoms} />
-                  </td>
-                  <td>{address}</td>
-                  <td>{daysInQuarantine}</td>
-                  <td>{mobileNumber}</td>
-                </tr>
-              );
+              return <PatientRow key={patient.id} patient={patient} />;
             })}
           </tbody>
         </table>

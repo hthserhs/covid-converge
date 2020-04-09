@@ -1,10 +1,12 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import {
   getHealthWorkerQuarantineCenters,
-  getQuarantineCenters,
   updateHealthWorkerQuarantineCenters
-} from '../../api/infrastructure';
+} from '../../api/health-workers';
+import { getQuarantineCenters } from '../../api/locations';
+import { AuthContext } from '../../auth-state';
 import { QuarantineCenter } from '../../types/types';
 import Checkbox from '../common/Checkbox';
 import Pagination from '../common/Pagination';
@@ -22,6 +24,8 @@ const QuarantineCenters = () => {
   const [allCenters, setAllCenters] = useState<QuarantineCenter[]>([]);
   const [currentCenters, setCurrentCenters] = useState<QuarantineCenter[]>([]);
 
+  const { user } = useContext(AuthContext);
+
   const [pagination, setPagination] = useState({
     currentPage: 0,
     total: 0,
@@ -31,30 +35,35 @@ const QuarantineCenters = () => {
   const { currentPage, total, pageSize } = pagination;
 
   useEffect(() => {
-    Promise.all([getHealthWorkerQuarantineCenters(1), getQuarantineCenters()])
-      .then(([hwQC, allQC]) => {
-        const sel = hwQC.reduce<Selection>(
-          (acc, cur) => ({
-            ...acc,
-            [cur.id]: true
-          }),
-          {}
-        );
-        setOriginalSelection(sel);
-        setSelection(sel);
-        setAllCenters(allQC);
-        setCurrentCenters(allQC);
-        setPagination((p) => ({
-          ...p,
-          total: allQC.length
-        }));
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-        setError('An error occurred. Try again later.');
-      });
-  }, []);
+    if (user?.id) {
+      Promise.all([
+        getHealthWorkerQuarantineCenters(user.id),
+        getQuarantineCenters()
+      ])
+        .then(([hwQC, allQC]) => {
+          const sel = hwQC.reduce<Selection>(
+            (acc, cur) => ({
+              ...acc,
+              [cur.id]: true
+            }),
+            {}
+          );
+          setOriginalSelection(sel);
+          setSelection(sel);
+          setAllCenters(allQC);
+          setCurrentCenters(allQC);
+          setPagination((p) => ({
+            ...p,
+            total: allQC.length
+          }));
+          setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+          setError('An error occurred. Try again later.');
+        });
+    }
+  }, [user]);
 
   const onNextPage = () => {
     setPagination({
@@ -91,7 +100,15 @@ const QuarantineCenters = () => {
     const centers = Object.entries(selection)
       .filter(([_, v]) => v)
       .map(([k]) => +k);
-    updateHealthWorkerQuarantineCenters(1, centers).then(console.log);
+    if (user?.id) {
+      updateHealthWorkerQuarantineCenters(user.id, centers).then(() =>
+        toast.success('Updated!', {
+          position: 'top-center',
+          hideProgressBar: true,
+          autoClose: 3000
+        })
+      );
+    }
   };
 
   const from = currentPage * pageSize + (total > 0 ? 1 : 0);
@@ -112,7 +129,9 @@ const QuarantineCenters = () => {
 
   return (
     <>
-      <h1 className="title">Quarantine Centers</h1>
+      <h1 className="title">
+        <FontAwesomeIcon icon="hospital" /> Quarantine Centers
+      </h1>
       <div className="level">
         <div className="level-left">
           <div className="field">

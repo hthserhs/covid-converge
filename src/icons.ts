@@ -1,9 +1,11 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCheckSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
 import {
+  faHospital,
   faHospitalUser,
   faMobile,
   faPhoneAlt,
+  faProcedures,
   faSearch,
   faUser,
   faVirus
@@ -17,5 +19,8 @@ library.add(
   faSearch,
   faMobile,
   faPhoneAlt,
-  faUser
+  faUser,
+  faHospitalUser,
+  faProcedures,
+  faHospital
 );

@@ -66,7 +66,7 @@ const Navbar = () => {
           </div>
           <div className="navbar-end">
             <div className="navbar-item">
-              <button className="button is-light" onClick={signOut}>
+              <button className="button is-light is-small" onClick={signOut}>
                 Logout
               </button>
             </div>

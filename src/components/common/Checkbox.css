@@ -1,3 +1,7 @@
 .Checkbox-button.button {
   justify-content: flex-start;
 }
+
+.Checkbox-label {
+  margin-left: 0.5rem;
+}

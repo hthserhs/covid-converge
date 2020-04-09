@@ -27,7 +27,9 @@ const Checkbox: FC<Props> = ({ label, checked, onToggle }) => {
           style={{ fontSize: 24 }}
         />
       </span>
-      <span className={c({ 'has-text-weight-semibold': checked })}>
+      <span
+        className={c('Checkbox-label', { 'has-text-weight-semibold': checked })}
+      >
         {label}
       </span>
     </button>

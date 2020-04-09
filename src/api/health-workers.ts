@@ -1,9 +1,9 @@
-import { QuarantineCenter } from '../types/types';
+import { HealthWorkerDTO, Patient, QuarantineCenter } from '../types/types';
 import api from './client';
 
-export async function getQuarantineCenters() {
+export async function getPatients(id: number) {
   return api
-    .get<QuarantineCenter[]>('locations')
+    .get<Patient[]>(`/healthworkers/${id}/patients`)
     .then((response) => response.data);
 }
 
@@ -19,5 +19,15 @@ export async function updateHealthWorkerQuarantineCenters(
 ) {
   return api
     .put(`/healthworkers/${id}/locations`, centers)
+    .then((response) => response.data);
+}
+
+export async function getUser(token: string, id: string) {
+  return api
+    .get<HealthWorkerDTO>(`/healthworkers/${id}`, {
+      headers: {
+        token
+      }
+    })
     .then((response) => response.data);
 }

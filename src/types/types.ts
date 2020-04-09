@@ -40,16 +40,29 @@ export interface QuarantineCenter {
   contactNumbers: ContactNumbers;
 }
 
-export interface Symptom {
-  name: string;
-  displayName: string;
-  severity: number; // [0, 3]
-  value?: number;
-}
-
 export interface ContactNumbers {
   landline: string;
   fax?: string;
   mobilenumber?: string;
   Mobile?: string;
+}
+
+export interface HealthWorkerDTO {
+  id: number;
+  name: string;
+  role: 'DOCTOR';
+  mobile: string;
+  emailId: string;
+}
+
+export interface PatientHealthRecord {
+  date: number;
+  note: string;
+  sequenceNo: number;
+  symptoms: Symptom[];
+}
+
+export interface Symptom {
+  name: string;
+  severity: string;
 }
