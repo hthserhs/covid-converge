@@ -12,7 +12,7 @@ const Navbar = () => {
     setMenu(!menu);
   };
 
-  const { token, signOut } = useContext(AuthContext);
+  const { token, signOut, user } = useContext(AuthContext);
 
   return (
     <nav
@@ -65,10 +65,15 @@ const Navbar = () => {
             </NavLink>
           </div>
           <div className="navbar-end">
-            <div className="navbar-item">
-              <button className="button is-light is-small" onClick={signOut}>
-                Logout
-              </button>
+            <div className="navbar-item has-dropdown is-hoverable">
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              <a className="navbar-link">{user?.name}</a>
+              <div className="navbar-dropdown">
+                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                <a className="navbar-item" onClick={signOut}>
+                  Logout
+                </a>
+              </div>
             </div>
           </div>
         </div>
