@@ -62,7 +62,7 @@ const PatientRow: FC<Props> = ({ patient, symptomList, quarantineCenter }) => {
       <td>
         {firstName} {lastName}
       </td>
-      <td style={{ overflowX: 'auto' }}>
+      <td>
         <SymptomTags symptoms={notableSymptoms} symptomList={symptomList} />
       </td>
       <td>{quarantineCenter?.address}</td>
