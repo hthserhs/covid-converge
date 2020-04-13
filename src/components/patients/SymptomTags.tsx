@@ -1,28 +1,30 @@
 import c from 'classnames';
 import React, { FC } from 'react';
+import { APISymptom } from '../../api/types';
 import { Symptom } from '../../types/types';
-
-// const COLOR_CODES = ['light', 'warning', 'danger'];
 
 interface Props {
   symptoms: Symptom[];
+  symptomList: APISymptom[];
 }
 
-const SymptomTags: FC<Props> = ({ symptoms }) => {
+const SymptomTags: FC<Props> = ({ symptoms, symptomList }) => {
   return (
-    <div className="field is-grouped">
-      {symptoms.map((symptom) => (
-        <div key={symptom.name} className="control">
-          <div className="tags has-addons">
-            <span className={c('tag', `is-info`)}>{symptom.name}</span>
-            {/* <span
-              className={c('tag', `is-${COLOR_CODES[symptom.severity - 1]}`)}
-            >
-              {symptom.value || 'NA'}
-            </span> */}
-          </div>
-        </div>
-      ))}
+    <div className="field is-grouped is-grouped-multiline">
+      {symptoms
+        .filter((s) => s.severity !== 'unspecified')
+        .map((s) => {
+          const symptom = symptomList.find((sym) => sym.name === s.name);
+          return (
+            <div key={symptom?.name} className="control">
+              <div className="tags has-addons">
+                <span className={c('tag', `is-warning`)}>
+                  {symptom?.displayName || 'NA'}
+                </span>
+              </div>
+            </div>
+          );
+        })}
     </div>
   );
 };

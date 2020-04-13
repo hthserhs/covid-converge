@@ -1,8 +1,11 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext, useEffect, useState } from 'react';
 import { getPatients } from '../../api/health-workers';
+import { getQuarantineCenters } from '../../api/locations';
+import { getSymptoms } from '../../api/meta';
+import { APISymptom } from '../../api/types';
 import { AuthContext } from '../../auth-state';
-import { Patient } from '../../types/types';
+import { Patient, QuarantineCenter } from '../../types/types';
 import Pagination from '../common/Pagination';
 import PatientRow from './PatientRow';
 import './Patients.css';
@@ -15,6 +18,8 @@ const Patients = () => {
   const [allPatients, setAllPatients] = useState<Patient[]>([]);
   const [currentPatients, setCurrentPatients] = useState<Patient[]>([]);
   const [query, setQuery] = useState<string>('');
+  const [allCenters, setAllCenters] = useState<QuarantineCenter[]>([]);
+  const [symptomList, setSymptomList] = useState<APISymptom[]>([]);
 
   const [pagination, setPagination] = useState({
     currentPage: 0,
@@ -28,9 +33,8 @@ const Patients = () => {
 
   useEffect(() => {
     if (user?.id) {
-      getPatients(user.id)
-        // .then((resultSet) => resultSet.sort((a, b) => b.riskScore - a.riskScore))
-        .then((resultSet) => {
+      Promise.all([getPatients(user.id), getQuarantineCenters(), getSymptoms()])
+        .then(([resultSet, quarantineCenters, symptoms]) => {
           setLoading(false);
           setAllPatients(resultSet);
           setCurrentPatients(resultSet);
@@ -38,6 +42,8 @@ const Patients = () => {
             ...p,
             total: resultSet.length
           }));
+          setAllCenters(quarantineCenters);
+          setSymptomList(symptoms);
         })
         .catch(() => {
           setLoading(false);
@@ -79,7 +85,9 @@ const Patients = () => {
 
   const from = currentPage * pageSize + (total > 0 ? 1 : 0);
   const to = Math.min(from + pageSize - 1, total);
-  const patients = currentPatients.slice(from - 1, to);
+  const patients = currentPatients
+    .slice(from - 1, to)
+    .sort((a, b) => a.id - b.id);
 
   if (loading) {
     return <>Loading...</>;
@@ -127,7 +135,17 @@ const Patients = () => {
           </thead>
           <tbody>
             {patients.map((patient) => {
-              return <PatientRow key={patient.id} patient={patient} />;
+              const quarantineCenter = allCenters.find(
+                (c) => c.id === patient.locationId
+              );
+              return (
+                <PatientRow
+                  key={patient.id}
+                  patient={patient}
+                  quarantineCenter={quarantineCenter}
+                  symptomList={symptomList}
+                />
+              );
             })}
           </tbody>
         </table>

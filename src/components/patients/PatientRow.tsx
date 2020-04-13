@@ -1,24 +1,31 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { getPatientHealthRecords } from '../../api/patients';
+import { APISymptom } from '../../api/types';
 import { AuthContext } from '../../auth-state';
-import { Patient, PatientHealthRecord, Symptom } from '../../types/types';
+import {
+  Patient,
+  PatientHealthRecord,
+  QuarantineCenter,
+  Symptom
+} from '../../types/types';
 import SymptomTags from './SymptomTags';
 
 const MILLIS_DAY = 24 * 60 * 60 * 1000;
 
 type Props = {
   patient: Patient;
+  symptomList: APISymptom[];
+  quarantineCenter?: QuarantineCenter;
 };
 
-const PatientRow: FC<Props> = ({ patient }) => {
+const PatientRow: FC<Props> = ({ patient, symptomList, quarantineCenter }) => {
   const {
     id,
     isHighRisk,
     firstName,
     lastName,
     quarantineStartDate,
-    address,
     mobileNumber
   } = patient;
 
@@ -56,9 +63,9 @@ const PatientRow: FC<Props> = ({ patient }) => {
         {firstName} {lastName}
       </td>
       <td style={{ overflowX: 'auto' }}>
-        <SymptomTags symptoms={notableSymptoms} />
+        <SymptomTags symptoms={notableSymptoms} symptomList={symptomList} />
       </td>
-      <td>{address}</td>
+      <td>{quarantineCenter?.address}</td>
       <td>{daysInQuarantine}</td>
       <td>{mobileNumber}</td>
     </tr>
